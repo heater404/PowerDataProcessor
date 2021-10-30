@@ -19,7 +19,7 @@ DtComm::DtComm() :devID(DEFAULT_DEV_ID)
 {
 
 }
- 
+
 int DtComm::OpenDevice()
 {
 	int ret = DT_ERROR_OK;
@@ -133,6 +133,7 @@ int DtComm::GetSensorImage(unsigned char* pOutBuf)
 }
 
 
+
 int DtComm::WriteSif2610Reg(uint16_t regAddr, uint32_t regValue)
 {
 	uint32_t regValueNew = SIF2610_I2C_DEV_PRO_COVER(regValue);
@@ -151,7 +152,7 @@ int DtComm::ReadSif2610Reg(uint16_t regAddr, uint32_t* regValue)
 
 	*regValue = SIF2610_I2C_DEV_PRO_COVER(*regValue);
 	std::cout << "Read " << hex << showbase << regAddr
-		<< ":" <<*regValue << endl;
+		<< ":" << *regValue << endl;
 	return ret;
 }
 
@@ -176,5 +177,20 @@ int DtComm::LoadSif2610Regs(char* path)
 		sscanf_s(item.value.c_str(), "%x", &val);
 		WriteSif2610Reg(key, val);
 	}
+	return 0;
+}
+
+/// <summary>
+/// 通过修改0x0429寄存器来控制帧率
+/// </summary>
+/// <param name="fps">MIPI帧帧率</param>
+/// <returns></returns>
+int DtComm::SetFPS(uint16_t fps)
+{
+	//计算需要填写的寄存器的值
+	uint32_t value = (uint32_t)(1 * 1000 * 1000 / fps * (990 / 8));
+
+	WriteSif2610Reg(0x0429, value);
+
 	return 0;
 }

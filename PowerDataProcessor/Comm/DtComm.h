@@ -43,6 +43,8 @@ public:
 	int ReadSif2610Reg(uint16_t regAdr, uint32_t* regValue);
 
 	int LoadSif2610Regs(char* path);
+
+	int SetFPS(uint16_t fps);
 };
 
 
