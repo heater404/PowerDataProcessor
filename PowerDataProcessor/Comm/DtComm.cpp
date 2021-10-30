@@ -188,7 +188,7 @@ int DtComm::LoadSif2610Regs(char* path)
 int DtComm::SetFPS(uint16_t fps)
 {
 	//计算需要填写的寄存器的值
-	UINT32 value = 1 * 1000 * 1000 / fps * (990 / 8);
+	uint32_t value = (uint32_t)(1 * 1000 * 1000 / fps * (990 / 8));
 
 	WriteSif2610Reg(0x0429, value);
 
