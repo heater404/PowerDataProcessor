@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Comm">
+      <UniqueIdentifier>{b0442187-0446-4472-9044-58cf83be531d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SensorCfg">
+      <UniqueIdentifier>{0a1b3a22-2ab5-4749-abb4-773e84b0ce7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3rdParty">
+      <UniqueIdentifier>{4f941bde-84e5-46b0-84e3-eb4ffdaa4ffc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IniFileHelper">
+      <UniqueIdentifier>{8a94a1d7-ae8e-44a3-98e9-6d889909d282}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BufferManager">
+      <UniqueIdentifier>{4a1a730a-6c9e-4fe6-a7d3-63ce7d612118}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Comm\DtComm.cpp">
+      <Filter>Comm</Filter>
+    </ClCompile>
+    <ClCompile Include="SensorCfg\DtSensorCfg.cpp">
+      <Filter>SensorCfg</Filter>
+    </ClCompile>
+    <ClCompile Include="IniFileHelper\inifile.cpp">
+      <Filter>IniFileHelper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Comm\DtComm.h">
+      <Filter>Comm</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\dtccm2.h">
+      <Filter>3rdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\DtccmKit.h">
+      <Filter>3rdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="lib\imagekit.h">
+      <Filter>3rdParty</Filter>
+    </ClInclude>
+    <ClInclude Include="SensorCfg\DtSensorCfg.h">
+      <Filter>SensorCfg</Filter>
+    </ClInclude>
+    <ClInclude Include="IniFileHelper\inifile.h">
+      <Filter>IniFileHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="BufferManager\BufferManger.h">
+      <Filter>BufferManager</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
