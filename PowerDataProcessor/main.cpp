@@ -65,6 +65,9 @@ int main(int argc, char* argv[])
 
 	comm->LoadSif2610Regs(path);
 
+	comm->InitSPI();
+	comm->LoadVcselDriverRegs(path);
+
 	uint16_t width, height;
 	GetResolution(&width, &height);
 

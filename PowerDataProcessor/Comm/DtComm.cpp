@@ -20,6 +20,15 @@ DtComm::DtComm() :devID(DEFAULT_DEV_ID)
 
 }
 
+int DtComm::InitSPI()
+{
+	int ret = 0;
+	ret = WriteSif2610Reg(SPI_CTRL, 0x0000000F);
+	ret = WriteSif2610Reg(SPI_TIMING_CTRL, 0x13271313);
+
+	return ret;
+}
+
 int DtComm::OpenDevice()
 {
 	int ret = DT_ERROR_OK;
@@ -63,12 +72,17 @@ int DtComm::CloseDevice()
 
 int DtComm::InitDevice(char* path)
 {
+	int ret = 0;
 	DtSensorCfg cfg;
-	return cfg.ConfigDtSensor(devID, path);
+	ret = cfg.ConfigDtSensor(devID, path);
+	return ret;
 }
 
 int DtComm::StartStream(unsigned short width, unsigned short height)
 {
+	WriteSif2610Reg(SIF2610_SW_STANDBY, 1);
+	WriteSif2610Reg(SIF2610_SEQUENCER_GO, 1);
+
 	SetSensorPort(SENSOR_PORT_MIPI, width, height, devID);
 
 	int iRet = _DTCCM2_H_::InitDevice(NULL, width, height, SENSOR_PORT_MIPI, FORMAT_MIPI_RAW12, CHANNEL_A, NULL, devID);
@@ -139,9 +153,9 @@ int DtComm::WriteSif2610Reg(uint16_t regAddr, uint32_t regValue)
 	uint32_t regValueNew = SIF2610_I2C_DEV_PRO_COVER(regValue);
 	int ret = WriteSensorI2cEx(SIF2610_I2C_DEV_ADDR, regAddr, 2,
 		(BYTE*)&regValueNew, 4, devID);
-
-	std::cout << "Write " << hex << showbase << regAddr
-		<< ":" << regValue << endl;
+	std::cout;
+	std::cout << "Write 0x" << setfill('0') << setw(4) << hex << regAddr
+		<< ":0x" << setfill('0') << setw(8) << hex << regValue << endl;
 	return ret;
 }
 
@@ -151,8 +165,79 @@ int DtComm::ReadSif2610Reg(uint16_t regAddr, uint32_t* regValue)
 		(BYTE*)regValue, 4, true, devID);
 
 	*regValue = SIF2610_I2C_DEV_PRO_COVER(*regValue);
-	std::cout << "Read " << hex << showbase << regAddr
-		<< ":" << *regValue << endl;
+	std::cout << "Read 0x" << setfill('0') << setw(4) << hex << regAddr
+		<< ":0x" << setfill('0') << setw(8) << hex << *regValue << endl;
+	return ret;
+}
+
+int DtComm::WriteVcselDriver(uint8_t regAddr, uint8_t regValue)
+{
+	std::cout << "\n" << endl;
+	bool ret = true;
+
+	ret = WriteSif2610Reg(SPI_CHAN_CTRL(1, 1), JOIN_SPI_CHANNEL_CTRL1(0, 0, 1));
+
+	if (ret) {
+		ret = WriteSif2610Reg(SPI_CHAN_CTRL(1, 2), JOIN_SPI_CHANNEL_CTRL2(0, 0, 0, 0, 0));
+	}
+
+	if (ret) {
+		ret = WriteSif2610Reg(SPI_TRANS_BUF_HEAD,
+			(regValue << 24) |
+			(SPI_WRITE_CTRL(regAddr) << 16) |
+			(SPI_RECV_NUM(0) << 8) |
+			(SPI_TRAN_NUM(2)));
+	}
+
+	if (ret) {
+		ret = WriteSif2610Reg(SPI_GO, SPI_GO_CHANNEL(1));
+	}
+
+	std::cout << "Write VcselDriver 0x" << setfill('0') << setw(2) << hex << (uint32_t)regAddr
+		<< ":0x" << setfill('0') << setw(2) << hex << (uint32_t)regValue << endl;
+
+	return ret;
+}
+
+int DtComm::ReadVcselDriver(uint8_t regAddr, uint8_t* regValue)
+{
+	std::cout << "\n" << endl;
+	bool ret = true;
+	uint32_t r_value = 0;
+
+	ret = WriteSif2610Reg(SPI_CHAN_CTRL(1, 1), JOIN_SPI_CHANNEL_CTRL1(0, 0, 1));
+
+	if (ret) {
+		ret = WriteSif2610Reg(SPI_CHAN_CTRL(1, 2), JOIN_SPI_CHANNEL_CTRL2(0, 0, 0, 0, 0));
+	}
+
+	if (ret) {
+		ret = WriteSif2610Reg(SPI_TRANS_BUF_HEAD,
+			(NULL_DATA << 24) |
+			(SPI_READ_CTRL(regAddr) << 16) |
+			(SPI_RECV_NUM(1) << 8) |
+			(SPI_TRAN_NUM(1)));
+	}
+
+	if (ret) {
+		ret = WriteSif2610Reg(SPI_GO, SPI_GO_CHANNEL(1));
+	}
+
+	if (ret) {
+		Sleep(1);
+		ret = ReadSif2610Reg(SPI_RECEV_BUF_HEAD, &r_value);
+	}
+
+	if (ret) {
+		*regValue = (r_value & 0xFF);
+	}
+	else {
+		*regValue = 0xFF;
+	}
+
+	std::cout << "Read VcselDriver 0x" << setfill('0') << setw(2) << hex << (uint32_t)(regAddr)
+		<< ":0x" << setfill('0') << setw(2) << hex << (uint32_t)(*regValue) << endl;
+
 	return ret;
 }
 
@@ -176,6 +261,32 @@ int DtComm::LoadSif2610Regs(char* path)
 		sscanf_s(item.key.c_str(), "%x", &key);
 		sscanf_s(item.value.c_str(), "%x", &val);
 		WriteSif2610Reg(key, val);
+	}
+	return 0;
+}
+
+int DtComm::LoadVcselDriverRegs(char* path)
+{
+	IniFile iniFile;
+
+	if (0 != iniFile.Load(path)) {
+		cout << "can't load " << path << endl;
+		return -1;
+	}
+
+	IniSection* section = iniFile.getSection("VcselDriver");
+	if (section == 0)
+		return -1;
+
+	uint8_t value;
+	for (size_t i = 0; i < section->items.size(); i++)
+	{
+		IniItem item = section->items.at(i);
+		uint32_t key, val;
+		sscanf_s(item.key.c_str(), "%x", &key);
+		sscanf_s(item.value.c_str(), "%x", &val);
+		WriteVcselDriver(key, val);
+		//ReadVcselDriver(key, &value);
 	}
 	return 0;
 }
