@@ -8,6 +8,7 @@
 #include <string>
 #include "BufferManager/BufferManger.h"
 #include "IniFileHelper/inifile.h"
+#include "Comm/Ebd.h"
 using namespace inifile;
 
 #define ImageWidthPixel 640
@@ -81,6 +82,19 @@ int main(int argc, char* argv[])
 		byte* image = new byte[width * height * 2];
 		comm->GetSensorImage(image);
 		rawBuffer.PushBuffer(image, width * height * 2);
+
+		byte* addinfo = image + (640 * 480 * 2);
+		AddInfoLineToEbd(addinfo);
+
+		EMBEDDED_DATA_t* ebd = (EMBEDDED_DATA_t*)(addinfo);
+		std::cout << "depth_map_cnt:" << (ebd->depth_map_cnt)
+			<< " seq_cnt:" << ebd->seq_cnt
+			<< " frame_cnt:" << ebd->frame_cnt
+			<< " subframe_cnt:" << ebd->subframe_cnt
+			<< " phase_cnt:" << (uint32_t)ebd->phase_cnt
+			<< " x_size:" << (uint32_t)ebd->x_size
+			<< " y_size:" << (uint32_t)ebd->y_size
+			<< endl;
 	}
 }
 

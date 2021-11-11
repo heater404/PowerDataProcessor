@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="BufferManager\BufferManger.h" />
     <ClInclude Include="Comm\DtComm.h" />
+    <ClInclude Include="Comm\Ebd.h" />
     <ClInclude Include="IniFileHelper\inifile.h" />
     <ClInclude Include="lib\dtccm2.h" />
     <ClInclude Include="lib\DtccmKit.h" />

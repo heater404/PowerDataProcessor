@@ -41,7 +41,7 @@ inline int BufferManager<T>::PushBuffer(T* item, int size)
 	{
 		buffer.pop();
 	}
-	cout << "Push" << endl;
+	//cout << "Push" << endl;
 	return 0;
 }
 
@@ -54,7 +54,7 @@ inline const T* BufferManager<T>::PopBuffer(int* size)
 
 	pair<T*, int> t = buffer.front();
 	buffer.pop();
-	cout << "Pop" << endl;
+	//cout << "Pop" << endl;
 	*size = t.second;
 	return t.first;
 }

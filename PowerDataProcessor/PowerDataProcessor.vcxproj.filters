@@ -68,5 +68,8 @@
     <ClInclude Include="BufferManager\BufferManger.h">
       <Filter>BufferManager</Filter>
     </ClInclude>
+    <ClInclude Include="Comm\Ebd.h">
+      <Filter>Comm</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
